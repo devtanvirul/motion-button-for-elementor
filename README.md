@@ -1,7 +1,7 @@
 # Motion Button for Elementor
 
 **Developer:** devtanvirul — https://devtanvirul.com  
-**Version:** 1.0.6  
+**Version:** 1.0.7  
 **Requirements:** WordPress 6.2+, PHP 7.4+, Elementor Free (or Pro).  
 **Price/dependencies:** No Elementor Pro or paid addon required. GSAP is an external open-web CDN dependency only for text animation; a built-in Web Animations fallback keeps button interactions working if blocked.
 
@@ -22,7 +22,7 @@
 | Content → Content & Link | Text, URL, new tab/nofollow, icon picker, icon position, aria-label |
 | Content → Hover Animation | Nine reveal effects, entry/exit speed, easing, icon effect, icon rotation, slide distance, hover scale/lift, magnetic effect, click ripple, independent color and icon timing |
 | Content → Text Hover Motion (GSAP) | Off, subtle lift, fade & rise, gentle scale, letter wave, blur reveal; enter/exit duration, distance, scale, stagger, opacity and easing |
-| Content → Mobile Motion (Touch & Tap) | **Mobile Animation: Same as desktop (default) or Custom**; Tap / Press / Off; phone breakpoint and touch scope; tap auto-reset. In Custom: background reveal, entry/exit duration, easing, icon rotation and animation, GSAP text effects, scale/lift, ripple |
+| Content → Mobile Motion (Touch & Tap) | **Mobile Animation: Colour + icon only (default), Same as desktop, or Custom**; Tap / Press / Off; phone breakpoint and touch scope; tap auto-reset. In Custom: background reveal, entry/exit duration, easing, icon rotation and animation, GSAP text effects, scale/lift, ripple |
 | Content → Accessibility & Behavior | Extra CSS class (older touch-ripple settings are preserved for migrated buttons) |
 | Style → Layout | Responsive alignment, width, min height, padding, corner radius, label/icon gap |
 | Style → Typography | Elementor typography group: family, size, weight, line height, letter spacing, etc. |
@@ -203,3 +203,72 @@ markup produced by the widget's own `render()`:
 
 Not verified here: a physical handset, and the back/forward-cache reset, which
 needs real history navigation. CSS is byte-identical to 1.0.5.
+
+## v1.0.7 — Lighter Mobile Motion and a Leaner Runtime
+
+**Content → Mobile Motion (Touch & Tap) → Mobile Animation** now has three modes.
+
+| Option | On a phone, a tap… |
+| --- | --- |
+| **Colour + icon only** (new default) | changes the background colour and the text colour, and animates the icon. No background sweep, no text motion, no lift, no scale, no ripple. |
+| **Same as desktop** | reuses every desktop animation value (the 1.0.6 default). |
+| **Custom mobile animation** | uses the separate mobile values below (the pre-1.0.6 behaviour). |
+
+Colour + icon only pins just the settings that would otherwise add motion —
+reveal effect `none`, text effect `none`, lift `0`, scale `100%`, ripple off.
+Easing, colour speed and the icon settings are left to inherit from desktop, so
+the icon animates exactly as designed on desktop and the colour change runs at
+the desktop colour speed. It needs no JavaScript animation at all: the colour
+change is the existing CSS `background-color`/`color` transition and the icon
+rotation is an existing CSS transform.
+
+### Performance
+
+- **GSAP is no longer a hard dependency.** It was loaded on every page carrying
+  the widget. Each text effect already has a native Web Animations fallback, and
+  `none` does no work at all, so the library is now requested from `render()`
+  only when a text effect is actually in play on desktop or mobile. A button
+  with **Text Animation → None** no longer loads it: **−71 KB raw / −28 KB
+  gzipped**, and one fewer third-party CDN connection. The runtime reads
+  `window.gsap` at interaction time, so load order does not matter.
+- **Lookup tables are built once per page** instead of once per button, and the
+  hot path iterates them without allocating a key array on every
+  mobile/desktop switch.
+- **The mobile pairing is derived, not duplicated.** Each desktop key maps to its
+  mobile counterpart by name (`textDuration` → `mobileTextDuration`), so the
+  second table is gone and cannot drift out of sync.
+- **The coarse-pointer media query is cached** rather than re-evaluated on every
+  viewport check.
+- **Redundant dataset writes are skipped** — each write touches the DOM.
+- **All pointer listeners are passive** (`pointerdown`, `pointerup` and
+  `pointermove` already were; `pointerenter`, `pointerleave` and `pointercancel`
+  now are too).
+
+`button.js` grew by 291 bytes raw / 250 gzipped to carry the new mode, which the
+conditional GSAP load repays many times over.
+
+### Verified
+
+Chromium with iPhone 13 emulation, real touch events, against markup from the
+widget's own `render()`:
+
+- On a page with **GSAP deliberately absent**, a tap moves the background
+  `rgb(229,33,43) → rgb(255,255,255)` and the label `rgb(255,255,255) →
+  rgb(229,33,43)`, and rotates the icon 45° → 135°. The reveal layer stays
+  `display: none`, no ripple node is created, the label keeps no inline styles,
+  and the colours return after the tap auto-reset.
+- Desktop on the same page is untouched: still the directional sweep, still the
+  `lift` text effect — and the label text still animates with GSAP absent,
+  confirming the native fallback works.
+- All six conditional-GSAP cases resolve correctly, including custom mobile
+  `wave` with desktop text effect `None`.
+- "Same as desktop" and "Custom" both still behave as in 1.0.6.
+
+Not verified here: a physical handset. CSS is byte-identical to 1.0.5.
+
+### Possible next step
+
+GSAP still comes from `cdn.jsdelivr.net`. Vendoring it into the plugin would
+remove the third-party connection and serve it same-origin, at the cost of
+~73 KB in the plugin and a manual update when GSAP changes. Not done here,
+since it is a packaging decision rather than a bug.

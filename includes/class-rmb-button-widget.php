@@ -463,12 +463,13 @@ class Raddito_Motion_Button_Widget extends \Elementor\Widget_Base {
         ) );
         $this->add_control( 'mobile_source', array(
             'label' => 'Mobile Animation', 'type' => $c::SELECT,
-            'default' => 'desktop',
+            'default' => 'simple',
             'options' => array(
-                'desktop' => 'Same as desktop (recommended)',
+                'simple' => 'Colour + icon only (recommended)',
+                'desktop' => 'Same as desktop',
                 'custom' => 'Custom mobile animation',
             ),
-            'description' => 'Same as desktop reuses every desktop animation value on phones, so the effect, speed, easing, distance and colour timing match exactly. Choose Custom to set mobile values separately; your previously saved mobile values are kept and reappear when you switch back.',
+            'description' => 'Colour + icon only is the lightest option: a tap changes the background and text colour and animates the icon, with no background sweep, no text motion and no lift, scale or ripple. Same as desktop reuses every desktop animation value on phones. Custom uses the separate mobile values below; your saved mobile values are kept and reappear when you switch back.',
         ) );
         $this->add_control( 'mobile_behavior', array(
             'label' => 'Touch Animation Behavior', 'type' => $c::SELECT,
@@ -706,16 +707,29 @@ class Raddito_Motion_Button_Widget extends \Elementor\Widget_Base {
         // value for that same setting, so phones animate exactly like desktop.
         // Behaviour, scope, breakpoint and auto-reset are not animation values and
         // always apply.
-        $mobile_custom = 'custom' === $this->chosen( $s['mobile_source'] ?? 'desktop', array( 'desktop', 'custom' ), 'desktop' );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-source', $mobile_custom ? 'custom' : 'desktop' );
+        $mobile_mode = $this->chosen( $s['mobile_source'] ?? 'simple', array( 'simple', 'desktop', 'custom' ), 'simple' );
+        $mobile_custom = 'custom' === $mobile_mode;
+        $mobile_simple = 'simple' === $mobile_mode;
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-source', $mobile_mode );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-behavior', $this->chosen( $s['mobile_behavior'] ?? 'tap', array( 'tap', 'press', 'off' ), 'tap' ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-scope', $this->chosen( $s['mobile_scope'] ?? 'phone', array( 'phone', 'touch' ), 'phone' ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-breakpoint', (string) $this->slider_number( $s, 'mobile_breakpoint', 767, 320, 1200 ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-hold', (string) $this->slider_number( $s, 'mobile_hold', 500, 0, 2500 ) );
+        // In Custom mode each mobile value applies. Otherwise an empty value makes
+        // the runtime fall back to the desktop value for that same setting.
         $m = function ( $value ) use ( $mobile_custom ) {
             return $mobile_custom ? (string) $value : '';
         };
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-effect', $m( $this->chosen( $s['mobile_reveal_effect'] ?? 'center', array( 'inherit', 'directional', 'left', 'right', 'top', 'bottom', 'center', 'diagonal', 'fade', 'none' ), 'center' ) ) );
+        // Colour + icon only pins the few settings that would otherwise add motion,
+        // so a tap changes just the colours while the icon still animates. Easing,
+        // colour speed and the icon settings are left to inherit from desktop.
+        $simple = function ( $pinned, $value ) use ( $mobile_simple, $mobile_custom ) {
+            if ( $mobile_simple ) {
+                return $pinned;
+            }
+            return $mobile_custom ? (string) $value : '';
+        };
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-effect', $simple( 'none', $this->chosen( $s['mobile_reveal_effect'] ?? 'center', array( 'inherit', 'directional', 'left', 'right', 'top', 'bottom', 'center', 'diagonal', 'fade', 'none' ), 'center' ) ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-enter', $m( $this->slider_number( $s, 'mobile_enter_duration', 420, 0, 2000 ) ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-leave', $m( $this->slider_number( $s, 'mobile_leave_duration', 360, 0, 2000 ) ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-ease', $m( $this->chosen( $s['mobile_ease'] ?? 'premium', array( 'premium', 'standard', 'gentle', 'snappy', 'linear' ), 'premium' ) ) );
@@ -723,7 +737,7 @@ class Raddito_Motion_Button_Widget extends \Elementor\Widget_Base {
         $this->add_render_attribute( 'rmb_link', 'data-mobile-icon-rotation', $m( $this->slider_number( $s, 'mobile_icon_rotation', 90, -360, 360 ) ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-icon-duration', $m( $this->slider_number( $s, 'mobile_icon_duration', 400, 0, 1800 ) ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-icon-slide', $m( $this->slider_number( $s, 'mobile_icon_slide', 4, 0, 30 ) ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-effect', $m( $this->chosen( $s['mobile_text_effect'] ?? 'lift', array( 'inherit', 'none', 'lift', 'rise', 'scale', 'wave', 'blur' ), 'lift' ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-effect', $simple( 'none', $this->chosen( $s['mobile_text_effect'] ?? 'lift', array( 'inherit', 'none', 'lift', 'rise', 'scale', 'wave', 'blur' ), 'lift' ) ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-text-duration', $m( $this->slider_number( $s, 'mobile_text_duration', 320, 0, 1600 ) ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-text-exit', $m( $this->slider_number( $s, 'mobile_text_exit', 260, 0, 1600 ) ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-text-distance', $m( $this->slider_number( $s, 'mobile_text_distance', 2, 0, 32 ) ) );
@@ -732,9 +746,27 @@ class Raddito_Motion_Button_Widget extends \Elementor\Widget_Base {
         $this->add_render_attribute( 'rmb_link', 'data-mobile-text-opacity', $m( $this->slider_number( $s, 'mobile_text_opacity', 80, 0, 100 ) ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-text-ease', $m( $this->chosen( $s['mobile_text_ease'] ?? 'soft', array( 'soft', 'smooth', 'sine', 'back', 'linear' ), 'soft' ) ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-color-duration', $m( $this->slider_number( $s, 'mobile_color_duration', 300, 0, 1200 ) ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-lift', $m( $this->slider_number( $s, 'mobile_lift', 0, 0, 24 ) ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-scale', $m( $this->slider_number( $s, 'mobile_scale', 100, 90, 120 ) ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-ripple', $m( $this->chosen( $s['mobile_ripple'] ?? 'inherit', array( 'inherit', 'yes', 'no' ), 'inherit' ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-lift', $simple( '0', $this->slider_number( $s, 'mobile_lift', 0, 0, 24 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-scale', $simple( '100', $this->slider_number( $s, 'mobile_scale', 100, 90, 120 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-ripple', $simple( 'no', $this->chosen( $s['mobile_ripple'] ?? 'inherit', array( 'inherit', 'yes', 'no' ), 'inherit' ) ) );
+
+        // GSAP only refines the text effects, and each of those already has a
+        // native Web Animations fallback, so it is requested only when a text
+        // effect is actually in play — on desktop or on mobile. A button whose
+        // text effect is None, or that only changes colours on mobile, never
+        // pays for the library.
+        $mobile_text_fx = 'none';
+        if ( $mobile_custom ) {
+            $mobile_text_fx = $this->chosen( $s['mobile_text_effect'] ?? 'lift', array( 'inherit', 'none', 'lift', 'rise', 'scale', 'wave', 'blur' ), 'lift' );
+            if ( 'inherit' === $mobile_text_fx ) {
+                $mobile_text_fx = $text_fx;
+            }
+        } elseif ( ! $mobile_simple ) {
+            $mobile_text_fx = $text_fx;
+        }
+        if ( 'none' !== $text_fx || 'none' !== $mobile_text_fx ) {
+            wp_enqueue_script( 'rmb-gsap' );
+        }
 
         if ( ! empty( $s['custom_css_class'] ) ) {
             $names = preg_split( '/\s+/', (string) $s['custom_css_class'] );

@@ -1,4 +1,4 @@
-/** Motion Button v1.0.6 — optional GSAP-powered hover text animation; WAAPI fallback. */
+/** Motion Button v1.0.7 — optional GSAP-powered hover text animation; WAAPI fallback. */
 (function () {
     'use strict';
 
@@ -11,8 +11,34 @@
         linear: 'linear'
     };
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const coarsePointer = window.matchMedia('(any-pointer: coarse)');
     const activeButtons = new Set();
     let resizeFrame = 0;
+
+    // Built once for every button, rather than per button, and iterated without
+    // allocating a key array on each mobile/desktop switch.
+    const DESKTOP_KEYS = [
+        'effect', 'iconEffect', 'textEffect', 'textEase', 'textDuration',
+        'textExit', 'textDistance', 'textScale', 'textStagger',
+        'textOpacity', 'ease', 'enter', 'leave'
+    ];
+    // Every desktop key has a mobile counterpart named the same way
+    // (textDuration -> mobileTextDuration), so the pairing is derived rather
+    // than kept as a second table that could drift out of sync.
+    const OVERRIDES = DESKTOP_KEYS.map(function (key) {
+        return [key, 'mobile' + key.charAt(0).toUpperCase() + key.slice(1)];
+    });
+    // [ custom property, mobile dataset key, unit ]
+    const CUSTOM_VARS = [
+        ['--rmb-enter-ms', 'mobileEnter', 'ms'],
+        ['--rmb-leave-ms', 'mobileLeave', 'ms'],
+        ['--rmb-icon-ms', 'mobileIconDuration', 'ms'],
+        ['--rmb-color-ms', 'mobileColorDuration', 'ms'],
+        ['--rmb-icon-hover-angle', 'mobileIconRotation', 'deg'],
+        ['--rmb-icon-slide', 'mobileIconSlide', 'px'],
+        ['--rmb-lift', 'mobileLift', 'px']
+    ];
+    const PASSIVE = { passive: true };
 
 
     function number(value, fallback, min, max) {
@@ -157,37 +183,9 @@
         // Store desktop values, so switching back from a phone viewport does
         // not destroy the user's original desktop animation settings.
         const desktop = {};
-        [
-            'effect', 'iconEffect', 'textEffect', 'textEase', 'textDuration',
-            'textExit', 'textDistance', 'textScale', 'textStagger',
-            'textOpacity', 'ease', 'enter', 'leave'
-        ].forEach(function (key) { desktop[key] = button.dataset[key]; });
-
-        const overrideMap = {
-            effect: 'mobileEffect',
-            iconEffect: 'mobileIconEffect',
-            textEffect: 'mobileTextEffect',
-            textEase: 'mobileTextEase',
-            textDuration: 'mobileTextDuration',
-            textExit: 'mobileTextExit',
-            textDistance: 'mobileTextDistance',
-            textScale: 'mobileTextScale',
-            textStagger: 'mobileTextStagger',
-            textOpacity: 'mobileTextOpacity',
-            ease: 'mobileEase',
-            enter: 'mobileEnter',
-            leave: 'mobileLeave'
-        };
-
-        const customVars = {
-            '--rmb-enter-ms': ['mobileEnter', 'ms'],
-            '--rmb-leave-ms': ['mobileLeave', 'ms'],
-            '--rmb-icon-ms': ['mobileIconDuration', 'ms'],
-            '--rmb-color-ms': ['mobileColorDuration', 'ms'],
-            '--rmb-icon-hover-angle': ['mobileIconRotation', 'deg'],
-            '--rmb-icon-slide': ['mobileIconSlide', 'px'],
-            '--rmb-lift': ['mobileLift', 'px']
-        };
+        for (let i = 0; i < DESKTOP_KEYS.length; i += 1) {
+            desktop[DESKTOP_KEYS[i]] = button.dataset[DESKTOP_KEYS[i]];
+        }
 
         // Letter wave needs prebuilt spans, including when enabled only on mobile.
         const hasWave = desktop.textEffect === 'wave' || button.dataset.mobileTextEffect === 'wave';
@@ -205,7 +203,7 @@
             const breakpoint = number(button.dataset.mobileBreakpoint, 767, 320, 1200);
             const phoneSize = window.innerWidth <= breakpoint;
             const allTouch = button.dataset.mobileScope === 'touch' && (
-                forceTouch || window.matchMedia('(any-pointer: coarse)').matches
+                forceTouch || coarsePointer.matches
             );
             return phoneSize || allTouch;
         }
@@ -216,12 +214,15 @@
             mobileApplied = enabled;
             const previousEffect = button.dataset.effect;
 
-            Object.keys(overrideMap).forEach(function (key) {
-                const override = button.dataset[overrideMap[key]];
-                button.dataset[key] = enabled && override !== undefined &&
+            for (let i = 0; i < OVERRIDES.length; i += 1) {
+                const key = OVERRIDES[i][0];
+                const override = button.dataset[OVERRIDES[i][1]];
+                const use = enabled && override !== undefined &&
                     override !== '' && override !== 'inherit'
                     ? override : desktop[key];
-            });
+                // Dataset writes hit the DOM, so skip the ones that change nothing.
+                if (button.dataset[key] !== use) button.dataset[key] = use;
+            }
             if (previousEffect !== button.dataset.effect) {
                 // A directional reveal uses an inline clip-path for WAAPI.
                 // Remove it when switching to wipes/fades, or it would
@@ -232,15 +233,15 @@
                 }
                 layer.style.removeProperty('clip-path');
             }
-            Object.keys(customVars).forEach(function (cssName) {
-                const setting = customVars[cssName];
-                const value = button.dataset[setting[0]];
+            for (let i = 0; i < CUSTOM_VARS.length; i += 1) {
+                const cssName = CUSTOM_VARS[i][0];
+                const value = button.dataset[CUSTOM_VARS[i][1]];
                 if (enabled && value !== undefined && value !== '') {
-                    button.style.setProperty(cssName, value + setting[1]);
+                    button.style.setProperty(cssName, value + CUSTOM_VARS[i][2]);
                 } else {
                     button.style.removeProperty(cssName);
                 }
-            });
+            }
             // Only override scale when a mobile value is actually set. Left empty
             // by "Same as desktop", the desktop --rmb-scale from the stylesheet
             // stays in force instead of being flattened to 1.
@@ -350,7 +351,7 @@
             applyResponsive(false);
             pointerInside = true;
             activate(event);
-        });
+        }, PASSIVE);
         button.addEventListener('pointermove', function (event) {
             if (!pointerInside || event.pointerType === 'touch' ||
                 button.dataset.magnetic !== 'yes' || !content) return;
@@ -363,13 +364,13 @@
                 button.style.setProperty('--rmb-mag-x', x.toFixed(2) + 'px');
                 button.style.setProperty('--rmb-mag-y', y.toFixed(2) + 'px');
             });
-        }, { passive: true });
+        }, PASSIVE);
         button.addEventListener('pointerleave', function (event) {
             if (event.pointerType === 'touch') return;
             pointerInside = false;
             resetMagnet();
             if (!button.matches(':focus-visible')) deactivate(event);
-        });
+        }, PASSIVE);
 
         // Mobile tap/press animation: no preventDefault(), so a link still
         // navigates on the very first tap. It is intentionally not a two-tap UI.
@@ -380,7 +381,7 @@
             clearTouchTimer();
             touchActive = true;
             activate(event);
-        }, { passive: true });
+        }, PASSIVE);
         button.addEventListener('pointerup', function (event) {
             if (event.pointerType !== 'touch' || !touchActive) return;
             clearTouchTimer();
@@ -392,7 +393,7 @@
             // fires, as expected. We never add a navigation delay.
             const hold = number(button.dataset.mobileHold, 500, 0, 2500);
             touchTimer = window.setTimeout(function () { closeTouch(event); }, hold);
-        }, { passive: true });
+        }, PASSIVE);
         button.addEventListener('pointercancel', function (event) {
             pointerInside = false;
             resetMagnet();
@@ -400,7 +401,7 @@
             if (event.pointerType !== 'touch' && !button.matches(':focus-visible')) {
                 deactivate(event);
             }
-        });
+        }, PASSIVE);
 
         button.addEventListener('focus', function () {
             applyResponsive(false);

@@ -3,7 +3,7 @@ Contributors: devtanvirul
 Tags: elementor, animated button, hover, directional, widget
 Requires at least: 6.2
 Requires PHP: 7.4
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv2 or later
 
 Premium-style directional reveal buttons with complete Elementor Free styling controls, icon rotation, and independent mobile tap/press animations.
@@ -24,6 +24,12 @@ Developer: devtanvirul
 Portfolio: https://devtanvirul.com
 
 == Changelog ==
+= 1.0.7 =
+* New default for phones: "Colour + icon only". A tap changes the background and text colour and animates the icon, with no background sweep, no text motion and no lift, scale or ripple. Mobile Animation still offers "Same as desktop" and "Custom mobile animation".
+* Performance: GSAP is no longer a hard dependency. It is requested only when a text effect is actually in play, so a button with Text Animation set to None loads 28 KB (gzipped) less. Every text effect already has a native Web Animations fallback.
+* Performance: the per-button lookup tables are built once for the whole page instead of per button, the mobile/desktop pairing is derived rather than duplicated, the coarse-pointer media query is cached, redundant dataset writes are skipped, and the remaining pointer listeners are passive.
+* Desktop behaviour, colours, CSS and all existing settings are unchanged.
+
 = 1.0.6 =
 * Mobile now animates exactly like desktop by default. New "Mobile Animation" control at the top of Mobile Motion: "Same as desktop" (new default) or "Custom mobile animation".
 * Fixed: phones always overrode 12 desktop animation values, including the background effect itself (Expand from Center instead of the desktop effect), so mobile never matched desktop.
