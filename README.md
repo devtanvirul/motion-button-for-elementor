@@ -1,7 +1,7 @@
 # Motion Button for Elementor
 
 **Developer:** devtanvirul — https://devtanvirul.com  
-**Version:** 1.0.5  
+**Version:** 1.0.6  
 **Requirements:** WordPress 6.2+, PHP 7.4+, Elementor Free (or Pro).  
 **Price/dependencies:** No Elementor Pro or paid addon required. GSAP is an external open-web CDN dependency only for text animation; a built-in Web Animations fallback keeps button interactions working if blocked.
 
@@ -22,7 +22,7 @@
 | Content → Content & Link | Text, URL, new tab/nofollow, icon picker, icon position, aria-label |
 | Content → Hover Animation | Nine reveal effects, entry/exit speed, easing, icon effect, icon rotation, slide distance, hover scale/lift, magnetic effect, click ripple, independent color and icon timing |
 | Content → Text Hover Motion (GSAP) | Off, subtle lift, fade & rise, gentle scale, letter wave, blur reveal; enter/exit duration, distance, scale, stagger, opacity and easing |
-| Content → Mobile Motion (Touch & Tap) | Independent phone/touch interactions: Tap, Press, Off; background reveal, entry/exit duration, easing, icon rotation and animation, GSAP text effects, auto-reset, scale/lift, ripple, breakpoint |
+| Content → Mobile Motion (Touch & Tap) | **Mobile Animation: Same as desktop (default) or Custom**; Tap / Press / Off; phone breakpoint and touch scope; tap auto-reset. In Custom: background reveal, entry/exit duration, easing, icon rotation and animation, GSAP text effects, scale/lift, ripple |
 | Content → Accessibility & Behavior | Extra CSS class (older touch-ripple settings are preserved for migrated buttons) |
 | Style → Layout | Responsive alignment, width, min height, padding, corner radius, label/icon gap |
 | Style → Typography | Elementor typography group: family, size, weight, line height, letter spacing, etc. |
@@ -148,3 +148,58 @@ Touch behavior Off disables touch motion; keyboard focus still supports the desk
 - **Nothing internal changed.** Plugin folder (`raddito-motion-button`), widget ID (`raddito-motion-button`), text domain, PHP class, `RMB_*` constants and `rmb-` CSS/JS prefixes are all identical to 1.0.4.
 - Because the folder and widget ID are unchanged, this ZIP installs **over** 1.0.4 as a normal update, and every Motion Button already placed on a page keeps its settings and keeps rendering.
 - No functional, animation, control or styling changes.
+
+## v1.0.6 — Mobile Matches Desktop
+
+**Open Content → Mobile Motion (Touch & Tap) → Mobile Animation.**
+
+| Option | Behaviour |
+| --- | --- |
+| **Same as desktop** (new default) | Phones reuse every desktop animation value — background effect, enter/exit duration, easing, icon effect and rotation, text effect and timing, colour speed, lift and scale. |
+| **Custom mobile animation** | The separate mobile values apply, exactly as in v1.0.4–1.0.5. All previously saved mobile values are kept and reappear here. |
+
+`Touch Animation Behavior` (Tap / Press / Off), `Apply Mobile Settings To`,
+`Phone Max Width` and `Tap Auto-Reset Delay` are not animation values, so they
+stay available in both modes. Touch motion still runs on phones in
+"Same as desktop" mode — it simply runs with the desktop values.
+
+### What was wrong
+
+- **Mobile never matched desktop.** The mobile controls each carried a concrete
+  default rather than "Inherit Desktop", and the runtime treated any non-inherit
+  value as an override. On a phone, 12 values were replaced — including the
+  background effect, which became *Expand from Center* regardless of the desktop
+  effect, at 420/360 ms instead of 700/620 ms.
+- **The odd mid-transition text colour on phones** followed from that. *Expand
+  from Center* grows the reveal from the middle of the button, which is where the
+  label sits, so the white reveal reached the text while the label colour was
+  still part-way through its own cross-fade — measured passing through
+  `rgb(246,178,182)` and `rgb(234,77,85)`. Mobile also used a shorter colour
+  speed (300 ms vs 350 ms), so the two were never in step. Desktop's cursor-origin
+  circle starts as a point and grows, so the same cross-fade reads correctly.
+  With mobile inheriting desktop, the phone now grows the circle from the finger
+  and the colour tracks it.
+- **Mobile click ripple could never fire.** The "Use existing ripple settings"
+  branch also required `data-touch`, which is emitted from a `mobile_animation`
+  setting that is no longer a registered control, so it was always `no`.
+- **Desktop Button Hover Scale was flattened on phones.** The runtime always
+  wrote `--rmb-scale` while mobile was active, defaulting to 100%, overriding a
+  desktop hover scale. It is now only written when a mobile scale is actually set.
+- **Back-button return left buttons stuck in hover colours.** A phone restoring
+  the page from the back/forward cache kept the touch state with no pointer event
+  to clear it. Buttons now reset on restore.
+
+### Verified
+
+Checked in Chromium with iPhone 13 emulation, driving real touch events against
+markup produced by the widget's own `render()`:
+
+- In "Same as desktop", all 13 animation data attributes and all 8 CSS custom
+  properties resolve **identically** on phone and desktop, while
+  `data-rmb-mobile-active` stays `yes`.
+- The touch ripple fires with Click Ripple on and Mobile Ripple on "inherit".
+- In "Custom", the phone still overrides 12 values, so existing custom
+  configurations are unchanged.
+
+Not verified here: a physical handset, and the back/forward-cache reset, which
+needs real history navigation. CSS is byte-identical to 1.0.5.

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Motion Button for Elementor
  * Description: A customizable animated button for Elementor Free with directional reveals, icon animation, responsive styles and global colors.
- * Version: 1.0.5
+ * Version: 1.0.6
  * Requires at least: 6.2
  * Requires PHP: 7.4
  * Author: devtanvirul
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'RMB_VERSION', '1.0.5' );
+define( 'RMB_VERSION', '1.0.6' );
 define( 'RMB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'RMB_URL', plugin_dir_url( __FILE__ ) );
 

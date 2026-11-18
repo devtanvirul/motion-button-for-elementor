@@ -458,8 +458,17 @@ class Raddito_Motion_Button_Widget extends \Elementor\Widget_Base {
         ) );
         $this->add_control( 'mobile_help', array(
             'type' => $c::RAW_HTML,
-            'raw' => 'Mobile motion settings are independent from desktop. Touch interactions never require a second tap and never delay navigation. On linked buttons, page navigation can naturally interrupt the visual animation. Select <strong>Off</strong> to disable touch motion.',
+            'raw' => 'Touch interactions never require a second tap and never delay navigation. On linked buttons, page navigation can naturally interrupt the visual animation. Set <strong>Touch Animation Behavior</strong> to <strong>Off</strong> to disable touch motion entirely.',
             'content_classes' => 'elementor-descriptor',
+        ) );
+        $this->add_control( 'mobile_source', array(
+            'label' => 'Mobile Animation', 'type' => $c::SELECT,
+            'default' => 'desktop',
+            'options' => array(
+                'desktop' => 'Same as desktop (recommended)',
+                'custom' => 'Custom mobile animation',
+            ),
+            'description' => 'Same as desktop reuses every desktop animation value on phones, so the effect, speed, easing, distance and colour timing match exactly. Choose Custom to set mobile values separately; your previously saved mobile values are kept and reappear when you switch back.',
         ) );
         $this->add_control( 'mobile_behavior', array(
             'label' => 'Touch Animation Behavior', 'type' => $c::SELECT,
@@ -492,6 +501,7 @@ class Raddito_Motion_Button_Widget extends \Elementor\Widget_Base {
         ) );
         $this->add_control( 'mobile_background_heading', array(
             'label' => 'Background Animation', 'type' => $c::HEADING, 'separator' => 'before',
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_reveal_effect', array(
             'label' => 'Mobile Background Effect', 'type' => $c::SELECT,
@@ -504,115 +514,133 @@ class Raddito_Motion_Button_Widget extends \Elementor\Widget_Base {
                 'center' => 'Expand from Center', 'diagonal' => 'Diagonal Reveal',
                 'fade' => 'Soft Fade', 'none' => 'Instant Color Change',
             ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_enter_duration', array(
             'label' => 'Mobile Enter Duration (ms)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 0, 'max' => 2000, 'step' => 20 ) ),
             'default' => array( 'size' => 420, 'unit' => 'px' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_leave_duration', array(
             'label' => 'Mobile Exit Duration (ms)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 0, 'max' => 2000, 'step' => 20 ) ),
             'default' => array( 'size' => 360, 'unit' => 'px' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_ease', array(
             'label' => 'Mobile Reveal Easing', 'type' => $c::SELECT,
             'default' => 'premium',
             'options' => array( 'premium' => 'Premium smooth', 'standard' => 'Ease in/out', 'gentle' => 'Gentle', 'snappy' => 'Snappy', 'linear' => 'Linear' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_icon_heading', array(
             'label' => 'Icon Animation', 'type' => $c::HEADING, 'separator' => 'before',
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_icon_effect', array(
             'label' => 'Mobile Icon Effect', 'type' => $c::SELECT,
             'default' => 'rotate',
             'options' => array( 'inherit' => 'Inherit Desktop', 'rotate' => 'Rotate', 'slide' => 'Slide Diagonal', 'scale' => 'Scale Up', 'pop' => 'Pop', 'none' => 'None' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_icon_rotation', array(
             'label' => 'Mobile Icon Rotation (°)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => -360, 'max' => 360, 'step' => 1 ) ),
             'default' => array( 'size' => 90, 'unit' => 'px' ),
-            'condition' => array( 'mobile_icon_effect' => 'rotate' ),
+            'condition' => array( 'mobile_source' => 'custom', 'mobile_icon_effect' => 'rotate' ),
         ) );
         $this->add_control( 'mobile_icon_duration', array(
             'label' => 'Mobile Icon Duration (ms)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 0, 'max' => 1800, 'step' => 20 ) ),
             'default' => array( 'size' => 400, 'unit' => 'px' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_icon_slide', array(
             'label' => 'Mobile Icon Slide (px)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 0, 'max' => 30 ) ),
             'default' => array( 'size' => 4, 'unit' => 'px' ),
-            'condition' => array( 'mobile_icon_effect' => 'slide' ),
+            'condition' => array( 'mobile_source' => 'custom', 'mobile_icon_effect' => 'slide' ),
         ) );
         $this->add_control( 'mobile_text_heading', array(
             'label' => 'Text Animation (GSAP)', 'type' => $c::HEADING, 'separator' => 'before',
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_text_effect', array(
             'label' => 'Mobile Text Effect', 'type' => $c::SELECT,
             'default' => 'lift',
             'options' => array( 'inherit' => 'Inherit Desktop', 'none' => 'Off', 'lift' => 'Subtle Lift', 'rise' => 'Fade & Rise', 'scale' => 'Gentle Scale', 'wave' => 'Letter Wave', 'blur' => 'Soft Blur Reveal' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_text_duration', array(
             'label' => 'Mobile Text Enter (ms)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 0, 'max' => 1600, 'step' => 10 ) ),
             'default' => array( 'size' => 320, 'unit' => 'px' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_text_exit', array(
             'label' => 'Mobile Text Exit (ms)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 0, 'max' => 1600, 'step' => 10 ) ),
             'default' => array( 'size' => 260, 'unit' => 'px' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_text_distance', array(
             'label' => 'Mobile Text Movement (px)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 0, 'max' => 32 ) ),
             'default' => array( 'size' => 2, 'unit' => 'px' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_text_scale', array(
             'label' => 'Mobile Text Scale (%)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 100, 'max' => 120 ) ),
             'default' => array( 'size' => 103, 'unit' => 'px' ),
-            'condition' => array( 'mobile_text_effect' => 'scale' ),
+            'condition' => array( 'mobile_source' => 'custom', 'mobile_text_effect' => 'scale' ),
         ) );
         $this->add_control( 'mobile_text_stagger', array(
             'label' => 'Mobile Letter Stagger (ms)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 0, 'max' => 150, 'step' => 5 ) ),
             'default' => array( 'size' => 20, 'unit' => 'px' ),
-            'condition' => array( 'mobile_text_effect' => 'wave' ),
+            'condition' => array( 'mobile_source' => 'custom', 'mobile_text_effect' => 'wave' ),
         ) );
         $this->add_control( 'mobile_text_opacity', array(
             'label' => 'Mobile Start Opacity (%)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 0, 'max' => 100, 'step' => 5 ) ),
             'default' => array( 'size' => 80, 'unit' => 'px' ),
-            'condition' => array( 'mobile_text_effect' => array( 'rise', 'blur' ) ),
+            'condition' => array( 'mobile_source' => 'custom', 'mobile_text_effect' => array( 'rise', 'blur' ) ),
         ) );
         $this->add_control( 'mobile_text_ease', array(
             'label' => 'Mobile Text Easing', 'type' => $c::SELECT,
             'default' => 'soft',
             'options' => array( 'soft' => 'Soft', 'smooth' => 'Smooth', 'sine' => 'Gentle', 'back' => 'Light Spring', 'linear' => 'Linear' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_misc_heading', array(
             'label' => 'More Mobile Motion', 'type' => $c::HEADING, 'separator' => 'before',
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_color_duration', array(
             'label' => 'Text / Icon Color Speed (ms)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 0, 'max' => 1200, 'step' => 20 ) ),
             'default' => array( 'size' => 300, 'unit' => 'px' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_lift', array(
             'label' => 'Mobile Button Lift (px)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 0, 'max' => 24 ) ),
             'default' => array( 'size' => 0, 'unit' => 'px' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_scale', array(
             'label' => 'Mobile Button Scale (%)', 'type' => $c::SLIDER,
             'range' => array( 'px' => array( 'min' => 90, 'max' => 120 ) ),
             'default' => array( 'size' => 100, 'unit' => 'px' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->add_control( 'mobile_ripple', array(
             'label' => 'Mobile Click Ripple', 'type' => $c::SELECT,
             'default' => 'inherit',
             'options' => array( 'inherit' => 'Use existing ripple settings', 'yes' => 'On', 'no' => 'Off' ),
+            'condition' => array( 'mobile_source' => 'custom' ),
         ) );
         $this->end_controls_section();
 
@@ -672,32 +700,41 @@ class Raddito_Motion_Button_Widget extends \Elementor\Widget_Base {
         $this->add_render_attribute( 'rmb_link', 'data-magnetic-strength', (string) $this->slider_number( $s, 'magnetic_strength', 5, 0, 20 ) );
         $this->add_render_attribute( 'rmb_link', 'data-ripple', ( 'yes' === ( $s['click_ripple'] ?? '' ) ) ? 'yes' : 'no' );
         $this->add_render_attribute( 'rmb_link', 'data-touch', ( 'yes' === ( $s['mobile_animation'] ?? '' ) ) ? 'yes' : 'no' );
-        // Mobile configuration is kept separate from desktop. JS activates it only
-        // at the chosen viewport breakpoint (or on touch screens if enabled).
+        // Mobile motion runs at the chosen viewport breakpoint (or on touch screens
+        // if enabled). In the default "Same as desktop" mode every animation value
+        // below is emitted empty, which makes the runtime fall back to the desktop
+        // value for that same setting, so phones animate exactly like desktop.
+        // Behaviour, scope, breakpoint and auto-reset are not animation values and
+        // always apply.
+        $mobile_custom = 'custom' === $this->chosen( $s['mobile_source'] ?? 'desktop', array( 'desktop', 'custom' ), 'desktop' );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-source', $mobile_custom ? 'custom' : 'desktop' );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-behavior', $this->chosen( $s['mobile_behavior'] ?? 'tap', array( 'tap', 'press', 'off' ), 'tap' ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-scope', $this->chosen( $s['mobile_scope'] ?? 'phone', array( 'phone', 'touch' ), 'phone' ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-breakpoint', (string) $this->slider_number( $s, 'mobile_breakpoint', 767, 320, 1200 ) );
         $this->add_render_attribute( 'rmb_link', 'data-mobile-hold', (string) $this->slider_number( $s, 'mobile_hold', 500, 0, 2500 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-effect', $this->chosen( $s['mobile_reveal_effect'] ?? 'center', array( 'inherit', 'directional', 'left', 'right', 'top', 'bottom', 'center', 'diagonal', 'fade', 'none' ), 'center' ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-enter', (string) $this->slider_number( $s, 'mobile_enter_duration', 420, 0, 2000 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-leave', (string) $this->slider_number( $s, 'mobile_leave_duration', 360, 0, 2000 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-ease', $this->chosen( $s['mobile_ease'] ?? 'premium', array( 'premium', 'standard', 'gentle', 'snappy', 'linear' ), 'premium' ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-icon-effect', $this->chosen( $s['mobile_icon_effect'] ?? 'rotate', array( 'inherit', 'rotate', 'slide', 'scale', 'pop', 'none' ), 'rotate' ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-icon-rotation', (string) $this->slider_number( $s, 'mobile_icon_rotation', 90, -360, 360 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-icon-duration', (string) $this->slider_number( $s, 'mobile_icon_duration', 400, 0, 1800 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-icon-slide', (string) $this->slider_number( $s, 'mobile_icon_slide', 4, 0, 30 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-effect', $this->chosen( $s['mobile_text_effect'] ?? 'lift', array( 'inherit', 'none', 'lift', 'rise', 'scale', 'wave', 'blur' ), 'lift' ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-duration', (string) $this->slider_number( $s, 'mobile_text_duration', 320, 0, 1600 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-exit', (string) $this->slider_number( $s, 'mobile_text_exit', 260, 0, 1600 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-distance', (string) $this->slider_number( $s, 'mobile_text_distance', 2, 0, 32 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-scale', (string) $this->slider_number( $s, 'mobile_text_scale', 103, 100, 120 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-stagger', (string) $this->slider_number( $s, 'mobile_text_stagger', 20, 0, 150 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-opacity', (string) $this->slider_number( $s, 'mobile_text_opacity', 80, 0, 100 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-ease', $this->chosen( $s['mobile_text_ease'] ?? 'soft', array( 'soft', 'smooth', 'sine', 'back', 'linear' ), 'soft' ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-color-duration', (string) $this->slider_number( $s, 'mobile_color_duration', 300, 0, 1200 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-lift', (string) $this->slider_number( $s, 'mobile_lift', 0, 0, 24 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-scale', (string) $this->slider_number( $s, 'mobile_scale', 100, 90, 120 ) );
-        $this->add_render_attribute( 'rmb_link', 'data-mobile-ripple', $this->chosen( $s['mobile_ripple'] ?? 'inherit', array( 'inherit', 'yes', 'no' ), 'inherit' ) );
+        $m = function ( $value ) use ( $mobile_custom ) {
+            return $mobile_custom ? (string) $value : '';
+        };
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-effect', $m( $this->chosen( $s['mobile_reveal_effect'] ?? 'center', array( 'inherit', 'directional', 'left', 'right', 'top', 'bottom', 'center', 'diagonal', 'fade', 'none' ), 'center' ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-enter', $m( $this->slider_number( $s, 'mobile_enter_duration', 420, 0, 2000 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-leave', $m( $this->slider_number( $s, 'mobile_leave_duration', 360, 0, 2000 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-ease', $m( $this->chosen( $s['mobile_ease'] ?? 'premium', array( 'premium', 'standard', 'gentle', 'snappy', 'linear' ), 'premium' ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-icon-effect', $m( $this->chosen( $s['mobile_icon_effect'] ?? 'rotate', array( 'inherit', 'rotate', 'slide', 'scale', 'pop', 'none' ), 'rotate' ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-icon-rotation', $m( $this->slider_number( $s, 'mobile_icon_rotation', 90, -360, 360 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-icon-duration', $m( $this->slider_number( $s, 'mobile_icon_duration', 400, 0, 1800 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-icon-slide', $m( $this->slider_number( $s, 'mobile_icon_slide', 4, 0, 30 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-effect', $m( $this->chosen( $s['mobile_text_effect'] ?? 'lift', array( 'inherit', 'none', 'lift', 'rise', 'scale', 'wave', 'blur' ), 'lift' ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-duration', $m( $this->slider_number( $s, 'mobile_text_duration', 320, 0, 1600 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-exit', $m( $this->slider_number( $s, 'mobile_text_exit', 260, 0, 1600 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-distance', $m( $this->slider_number( $s, 'mobile_text_distance', 2, 0, 32 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-scale', $m( $this->slider_number( $s, 'mobile_text_scale', 103, 100, 120 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-stagger', $m( $this->slider_number( $s, 'mobile_text_stagger', 20, 0, 150 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-opacity', $m( $this->slider_number( $s, 'mobile_text_opacity', 80, 0, 100 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-text-ease', $m( $this->chosen( $s['mobile_text_ease'] ?? 'soft', array( 'soft', 'smooth', 'sine', 'back', 'linear' ), 'soft' ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-color-duration', $m( $this->slider_number( $s, 'mobile_color_duration', 300, 0, 1200 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-lift', $m( $this->slider_number( $s, 'mobile_lift', 0, 0, 24 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-scale', $m( $this->slider_number( $s, 'mobile_scale', 100, 90, 120 ) ) );
+        $this->add_render_attribute( 'rmb_link', 'data-mobile-ripple', $m( $this->chosen( $s['mobile_ripple'] ?? 'inherit', array( 'inherit', 'yes', 'no' ), 'inherit' ) ) );
 
         if ( ! empty( $s['custom_css_class'] ) ) {
             $names = preg_split( '/\s+/', (string) $s['custom_css_class'] );
@@ -715,7 +752,7 @@ class Raddito_Motion_Button_Widget extends \Elementor\Widget_Base {
         }
         if ( ! empty( $s['aria_label'] ) ) {
             $this->add_render_attribute( 'rmb_link', 'aria-label', sanitize_text_field( $s['aria_label'] ) );
-        } elseif ( 'wave' === $text_fx || 'wave' === ( $s['mobile_text_effect'] ?? '' ) ) {
+        } elseif ( 'wave' === $text_fx || ( $mobile_custom && 'wave' === ( $s['mobile_text_effect'] ?? '' ) ) ) {
             // Letter animation hides decorative character spans from screen readers.
             $this->add_render_attribute( 'rmb_link', 'aria-label', $label );
         }

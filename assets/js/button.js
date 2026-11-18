@@ -1,4 +1,4 @@
-/** Motion Button v1.0.4 — optional GSAP-powered hover text animation; WAAPI fallback. */
+/** Motion Button v1.0.6 — optional GSAP-powered hover text animation; WAAPI fallback. */
 (function () {
     'use strict';
 
@@ -241,9 +241,13 @@
                     button.style.removeProperty(cssName);
                 }
             });
-            if (enabled) {
+            // Only override scale when a mobile value is actually set. Left empty
+            // by "Same as desktop", the desktop --rmb-scale from the stylesheet
+            // stays in force instead of being flattened to 1.
+            const mobileScale = button.dataset.mobileScale;
+            if (enabled && mobileScale !== undefined && mobileScale !== '') {
                 button.style.setProperty('--rmb-scale',
-                    String(number(button.dataset.mobileScale, 100, 90, 120) / 100));
+                    String(number(mobileScale, 100, 90, 120) / 100));
             } else {
                 button.style.removeProperty('--rmb-scale');
             }
@@ -318,6 +322,15 @@
             clearTouchTimer();
             if (!button.matches(':focus-visible')) deactivate(event);
         }
+
+        // Returns the button to its resting state, colours included.
+        button._rmbReset = function () {
+            clearTouchTimer();
+            touchActive = false;
+            pointerInside = false;
+            resetMagnet();
+            deactivate(null);
+        };
 
         button._rmbMobileSync = function () {
             if (!button.isConnected) {
@@ -408,7 +421,10 @@
                 const mode = button.dataset.mobileRipple || 'inherit';
                 if (mode === 'yes') rippleOn = true;
                 else if (mode === 'no') rippleOn = false;
-                else rippleOn = rippleOn && button.dataset.touch === 'yes';
+                // "Inherit" keeps the desktop ripple setting as it is. It also
+                // required data-touch, which is emitted from a setting that is no
+                // longer registered and so was always "no" — meaning an inherited
+                // ripple could never fire on a touch device.
             }
             if (!rippleOn) return;
             const p = position(button, event);
@@ -423,6 +439,16 @@
             node.addEventListener('animationend', function () { node.remove(); }, { once: true });
         });
     }
+
+    // Returning to a page with Back on a phone can restore it from the back/forward
+    // cache with the touch state still applied, and no pointer event follows to
+    // clear it — leaving the label stuck in its hover colour. Reset on restore.
+    window.addEventListener('pageshow', function (event) {
+        if (!event.persisted) return;
+        activeButtons.forEach(function (button) {
+            if (typeof button._rmbReset === 'function') button._rmbReset();
+        });
+    });
 
     window.addEventListener('resize', function () {
         if (resizeFrame) window.cancelAnimationFrame(resizeFrame);

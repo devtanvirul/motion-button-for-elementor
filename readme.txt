@@ -3,7 +3,7 @@ Contributors: devtanvirul
 Tags: elementor, animated button, hover, directional, widget
 Requires at least: 6.2
 Requires PHP: 7.4
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 
 Premium-style directional reveal buttons with complete Elementor Free styling controls, icon rotation, and independent mobile tap/press animations.
@@ -24,6 +24,15 @@ Developer: devtanvirul
 Portfolio: https://devtanvirul.com
 
 == Changelog ==
+= 1.0.6 =
+* Mobile now animates exactly like desktop by default. New "Mobile Animation" control at the top of Mobile Motion: "Same as desktop" (new default) or "Custom mobile animation".
+* Fixed: phones always overrode 12 desktop animation values, including the background effect itself (Expand from Center instead of the desktop effect), so mobile never matched desktop.
+* Fixed: the odd mid-transition text colour on phones, caused by the centre-origin mobile reveal covering centred label text before the colour caught up, plus a shorter mobile colour speed.
+* Fixed: mobile click ripple could never fire when Mobile Click Ripple was left on "Use existing ripple settings".
+* Fixed: desktop Button Hover Scale was flattened to 100% on phones.
+* Buttons returning via the phone's Back button no longer stay stuck in their hover colours.
+* Custom mobile values are preserved; switch Mobile Animation to "Custom" to get the previous behaviour back.
+
 = 1.0.5 =
 * Renamed the plugin and Elementor widget label to "Motion Button for Elementor"; author now shown as devtanvirul.
 * Plugin folder, widget ID, text domain and CSS/JS prefixes are unchanged, so buttons already placed on pages keep working and this installs over 1.0.4.
