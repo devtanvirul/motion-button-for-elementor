@@ -1,0 +1,268 @@
+/* Motion Button v1.0.3 | Scoped to the widget only */
+.rmb-wrap {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    min-width: 0;
+}
+
+.rmb-button {
+    --rmb-bg: var(--e-global-color-accent, #E5212B);
+    --rmb-text: #FFFFFF;
+    --rmb-hover-bg: #FFFFFF;
+    --rmb-hover-text: var(--e-global-color-accent, #E5212B);
+    --rmb-icon-bg: #FFFFFF;
+    --rmb-icon-color: var(--e-global-color-accent, #E5212B);
+    --rmb-icon-hover-bg: var(--e-global-color-accent, #E5212B);
+    --rmb-icon-hover-color: #FFFFFF;
+    --rmb-icon-base-angle: 45deg;
+    --rmb-icon-hover-angle: 90deg;
+    --rmb-icon-slide: 4px;
+    --rmb-icon-radius: 12px;
+    --rmb-color-ms: 350ms;
+    --rmb-icon-ms: 500ms;
+    --rmb-enter-ms: 700ms;
+    --rmb-leave-ms: 620ms;
+    --rmb-lift: 0px;
+    --rmb-scale: 1;
+    --rmb-mag-x: 0px;
+    --rmb-mag-y: 0px;
+    --rmb-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    vertical-align: middle;
+    box-sizing: border-box;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 100px;
+    background: var(--rmb-bg);
+    color: var(--rmb-text);
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    font: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        color var(--rmb-color-ms) ease,
+        border-color var(--rmb-color-ms) ease,
+        background-color var(--rmb-color-ms) ease,
+        transform 450ms var(--rmb-ease),
+        box-shadow 450ms var(--rmb-ease);
+}
+
+.rmb-button:hover,
+.rmb-button:focus,
+.rmb-button:active,
+.rmb-button:visited {
+    text-decoration: none;
+}
+
+.rmb-button:focus-visible {
+    outline: 2px solid var(--rmb-icon-color);
+    outline-offset: 3px;
+}
+
+.rmb-button__reveal {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    background: var(--rmb-hover-bg);
+    pointer-events: none;
+    opacity: 1;
+    transform: none;
+    transition:
+        clip-path var(--rmb-leave-ms) var(--rmb-ease),
+        transform var(--rmb-leave-ms) var(--rmb-ease),
+        opacity var(--rmb-leave-ms) var(--rmb-ease);
+}
+.rmb-button.is-hovered .rmb-button__reveal,
+.rmb-button:focus-visible .rmb-button__reveal {
+    transition-duration: var(--rmb-enter-ms);
+}
+
+.rmb-button__content {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    transform: translate3d(var(--rmb-mag-x), var(--rmb-mag-y), 0);
+    transition: transform 220ms ease-out;
+}
+
+.rmb-button__text {
+    display: inline-block;
+    color: inherit;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.2;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.rmb-button__icon {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--rmb-icon-bg);
+    color: var(--rmb-icon-color);
+    transition:
+        background-color var(--rmb-color-ms) ease,
+        color 350ms ease;
+}
+.rmb-button--icon-rounded .rmb-button__icon { border-radius: var(--rmb-icon-radius); }
+.rmb-button--icon-square .rmb-button__icon { border-radius: 0; }
+.rmb-button--icon-none .rmb-button__icon { background: transparent !important; }
+
+.rmb-button__glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    font-size: 20px;
+    line-height: 1;
+    color: inherit;
+    transform: rotate(var(--rmb-icon-base-angle));
+    transition: transform var(--rmb-icon-ms) var(--rmb-ease);
+}
+.rmb-button__glyph i { color: inherit; font-size: inherit; line-height: 1; }
+.rmb-button__glyph svg {
+    display: block;
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+    color: inherit;
+}
+
+/* Character animation keeps text layout intact and respects word wrapping. */
+.rmb-button__word { display: inline-block; white-space: nowrap; }
+.rmb-button__char { display: inline-block; white-space: pre; }
+.rmb-button[data-text-effect="wave"] .rmb-button__text { white-space: normal; }
+
+/* Easing profiles, also mirrored by JS for directional animations. */
+.rmb-button[data-ease="premium"] { --rmb-ease: cubic-bezier(0.22, 1, 0.36, 1); }
+.rmb-button[data-ease="standard"] { --rmb-ease: cubic-bezier(0.42, 0, 0.58, 1); }
+.rmb-button[data-ease="gentle"] { --rmb-ease: cubic-bezier(0.25, 0.1, 0.25, 1); }
+.rmb-button[data-ease="snappy"] { --rmb-ease: cubic-bezier(0.2, 0.8, 0.2, 1); }
+.rmb-button[data-ease="linear"] { --rmb-ease: linear; }
+
+/* Background reveal variants. */
+.rmb-button[data-effect="directional"] .rmb-button__reveal {
+    clip-path: circle(0px at 50% 50%);
+    transition: none;
+}
+.rmb-button[data-effect="left"] .rmb-button__reveal { transform: translate3d(-102%, 0, 0); }
+.rmb-button[data-effect="right"] .rmb-button__reveal { transform: translate3d(102%, 0, 0); }
+.rmb-button[data-effect="top"] .rmb-button__reveal { transform: translate3d(0, -102%, 0); }
+.rmb-button[data-effect="bottom"] .rmb-button__reveal { transform: translate3d(0, 102%, 0); }
+.rmb-button[data-effect="center"] .rmb-button__reveal { transform: scaleX(0); transform-origin: center; }
+.rmb-button[data-effect="diagonal"] .rmb-button__reveal { clip-path: polygon(0 0, 0 0, 0 0, 0 0); }
+.rmb-button[data-effect="fade"] .rmb-button__reveal { opacity: 0; }
+.rmb-button[data-effect="none"] .rmb-button__reveal { display: none; }
+
+.rmb-button[data-effect="left"].is-hovered .rmb-button__reveal,
+.rmb-button[data-effect="right"].is-hovered .rmb-button__reveal,
+.rmb-button[data-effect="top"].is-hovered .rmb-button__reveal,
+.rmb-button[data-effect="bottom"].is-hovered .rmb-button__reveal,
+.rmb-button[data-effect="center"].is-hovered .rmb-button__reveal,
+.rmb-button[data-effect="left"]:focus-visible .rmb-button__reveal,
+.rmb-button[data-effect="right"]:focus-visible .rmb-button__reveal,
+.rmb-button[data-effect="top"]:focus-visible .rmb-button__reveal,
+.rmb-button[data-effect="bottom"]:focus-visible .rmb-button__reveal,
+.rmb-button[data-effect="center"]:focus-visible .rmb-button__reveal {
+    transform: none;
+}
+.rmb-button[data-effect="diagonal"].is-hovered .rmb-button__reveal,
+.rmb-button[data-effect="diagonal"]:focus-visible .rmb-button__reveal {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+.rmb-button[data-effect="fade"].is-hovered .rmb-button__reveal,
+.rmb-button[data-effect="fade"]:focus-visible .rmb-button__reveal { opacity: 1; }
+
+/* Hover colour reversal and optional lift / scale. */
+.rmb-button.is-hovered,
+.rmb-button:focus-visible {
+    color: var(--rmb-hover-text);
+    transform: translateY(calc(-1 * var(--rmb-lift))) scale(var(--rmb-scale));
+}
+.rmb-button[data-effect="none"].is-hovered,
+.rmb-button[data-effect="none"]:focus-visible { background: var(--rmb-hover-bg); }
+.rmb-button.is-hovered .rmb-button__icon,
+.rmb-button:focus-visible .rmb-button__icon {
+    background: var(--rmb-icon-hover-bg);
+    color: var(--rmb-icon-hover-color);
+}
+.rmb-button[data-icon-effect="rotate"].is-hovered .rmb-button__glyph,
+.rmb-button[data-icon-effect="rotate"]:focus-visible .rmb-button__glyph {
+    transform: rotate(calc(var(--rmb-icon-base-angle) + var(--rmb-icon-hover-angle)));
+}
+.rmb-button[data-icon-effect="slide"].is-hovered .rmb-button__glyph,
+.rmb-button[data-icon-effect="slide"]:focus-visible .rmb-button__glyph {
+    transform: rotate(var(--rmb-icon-base-angle)) translate(var(--rmb-icon-slide), calc(-1 * var(--rmb-icon-slide)));
+}
+.rmb-button[data-icon-effect="scale"].is-hovered .rmb-button__glyph,
+.rmb-button[data-icon-effect="scale"]:focus-visible .rmb-button__glyph {
+    transform: rotate(var(--rmb-icon-base-angle)) scale(1.3);
+}
+.rmb-button[data-icon-effect="pop"].is-hovered .rmb-button__glyph,
+.rmb-button[data-icon-effect="pop"]:focus-visible .rmb-button__glyph {
+    transform: rotate(var(--rmb-icon-base-angle)) scale(1.18);
+    transition-timing-function: cubic-bezier(0.34, 1.8, 0.55, 1);
+}
+
+.rmb-button__ripple {
+    position: absolute;
+    z-index: 1;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: currentColor;
+    opacity: 0.17;
+    transform: translate(-50%, -50%) scale(0);
+    animation: rmb-ripple 650ms ease-out forwards;
+}
+@keyframes rmb-ripple {
+    to { opacity: 0; transform: translate(-50%, -50%) scale(var(--rmb-ripple-scale, 20)); }
+}
+
+/* Accessible fallback: turn off all movement when reduced motion is requested. */
+@media (prefers-reduced-motion: reduce) {
+    .rmb-button, .rmb-button *, .rmb-button__reveal {
+        transition-duration: 0ms !important;
+        animation-duration: 0ms !important;
+        scroll-behavior: auto !important;
+    }
+    .rmb-button__ripple { display: none !important; }
+    .rmb-button[data-effect="directional"].is-hovered .rmb-button__reveal,
+    .rmb-button[data-effect="directional"]:focus-visible .rmb-button__reveal {
+        clip-path: circle(150% at 50% 50%) !important;
+    }
+}

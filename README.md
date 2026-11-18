@@ -1,1 +1,140 @@
-# motion-button-for-elementor
+# Motion Button for Elementor
+
+**Version:** 1.0.4  
+**Requirements:** WordPress 6.2+, PHP 7.4+, Elementor Free (or Pro).  
+**Price/dependencies:** No Elementor Pro or paid addon required. GSAP is an external open-web CDN dependency only for text animation; a built-in Web Animations fallback keeps button interactions working if blocked.
+
+## Install
+
+1. In WordPress, go to **Plugins → Add New Plugin → Upload Plugin**.
+2. Upload `motion-button.zip`, click **Install Now**, then **Activate**.
+3. Make sure the free **Elementor** plugin is active.
+4. Edit a page with Elementor. Search the widget list for **Motion Button**.
+5. Drag the widget into your page, then customize it in the widget panel. This is a **new widget**, not a modification of the native Elementor Button. Replace an existing button with this widget when migrating.
+6. Set the URL under **Content & Link → Link**. Default is `#` (a placeholder); replace it before publishing.
+7. Clear any caching/minification plugin cache after activating or updating.
+
+## Where to find controls
+
+| Elementor widget section | Editable options |
+| --- | --- |
+| Content → Content & Link | Text, URL, new tab/nofollow, icon picker, icon position, aria-label |
+| Content → Hover Animation | Nine reveal effects, entry/exit speed, easing, icon effect, icon rotation, slide distance, hover scale/lift, magnetic effect, click ripple, independent color and icon timing |
+| Content → Text Hover Motion (GSAP) | Off, subtle lift, fade & rise, gentle scale, letter wave, blur reveal; enter/exit duration, distance, scale, stagger, opacity and easing |
+| Content → Mobile Motion (Touch & Tap) | Independent phone/touch interactions: Tap, Press, Off; background reveal, entry/exit duration, easing, icon rotation and animation, GSAP text effects, auto-reset, scale/lift, ripple, breakpoint |
+| Content → Accessibility & Behavior | Extra CSS class (older touch-ripple settings are preserved for migrated buttons) |
+| Style → Layout | Responsive alignment, width, min height, padding, corner radius, label/icon gap |
+| Style → Typography | Elementor typography group: family, size, weight, line height, letter spacing, etc. |
+| Style → Button Colors & Border | Normal and hover backgrounds/text, border, border color, box shadow |
+| Style → Advanced Backgrounds (Optional) | Gradient and image background options for normal and hover reveal |
+| Style → Icon Style | Circle/rounded/square/none, responsive icon/icon-container size (0 allowed), icon circle padding, custom corner radius, initial rotation angle, normal/hover icon and circle colors |
+
+### Built-in hover effects
+
+- **Directional** — radial reveal from the mouse entry position, collapses toward the exit position; uses the Web Animations API for interruption-safe transitions.
+- **Left, Right, Top, Bottom** — directional wipe.
+- **Center** — horizontal center expansion.
+- **Diagonal** — polygon diagonal-origin reveal.
+- **Fade** — soft opacity transition.
+- **None** — immediate background switch with independent text/icon transitions.
+
+### Built-in icon effects
+
+- Rotate (default **+90° on hover**, editable from -360° to +360°)
+- Diagonal slide (distance adjustable)
+- Scale
+- Pop
+- None
+
+### Global Accent color
+
+Normal button background, hover text, normal icon foreground, and hover icon background reference **Elementor's Global Accent color**, with `#E5212B` as a CSS fallback. Change that global color from **Elementor → Site Settings → Global Colors → Accent**. Individual widget color controls can override global styles.
+
+### Default icon angle
+
+The default icon is a vertical up arrow rotated **45° at rest**, producing a diagonal up-right arrow. Hover adds **90°**, so the final total rotation is 135°. If you select an icon already pointing diagonally, set *Icon Initial Angle* to 0°.
+
+### Animations and accessibility
+
+- Animation disables movement when a visitor requests **reduced motion**.
+- Keyboard focus receives visible focus styling and hover state.
+- The Icon glyph is decorative; the button text or accessible label provides the link's accessible name.
+- Touch screens use a separate Tap/Press interaction with custom reveal, icon and text motion. Link navigation still occurs on the **first tap**, and may interrupt a long animation. No artificial delay or second-tap navigation is required.
+- No tracking or global styling overrides. For GSAP text motion, WordPress loads the GSAP library from jsDelivr (the CDN sees the visitor’s IP as with any third-party resource); offline/blocked-CDN browsing uses a limited native Web Animations fallback.
+
+## Technical notes
+
+- Assets: `assets/css/button.css` and `assets/js/button.js`. They are registered with WordPress and included as Elementor widget dependencies.
+- Widget: `includes/class-rmb-button-widget.php`.
+- Plugin bootstrap: `raddito-motion-button.php`.
+- The CSS and JavaScript are scoped under the widget's own `rmb-button` class.
+- Controls are registered using Elementor's Widget API and generated per-widget stylesheet selectors.
+- No direct database writes or admin settings changes are performed by this plugin.
+
+## Known boundaries
+
+- This is **not** an Elementor Pro feature and doesn't extend the native Button widget's panel. Use the new Motion Button widget.
+- For a destination link, supply a real URL; placeholder `#` must be replaced manually.
+- A WordPress/Elementor integration smoke test is recommended on a staging site before production, especially when using aggressive cache/JS optimization plugins.
+
+**Developer:** Tanvirul Islam.  
+**Portfolio:** https://devtanvirul.com  
+**License:** GPL-2.0-or-later.
+
+**Compatibility note:** The internal widget ID remains `raddito-motion-button` and plugin directory remains `raddito-motion-button` so existing Elementor pages continue to recognize the widget and the plugin can replace the earlier release. The visible plugin and widget names are **Motion Button**.
+
+## v1.0.2 — Zero Padding / Full Spacing Control Fix
+
+The original version included CSS fallback values for padding (8/10/8/32px), minimum height (64px), icon container dimensions (42px), and text/icon gap (14px). These have **all been removed from the CSS defaults**, so clearing a control will not resurrect hidden fallback spacing. New widgets retain the familiar design through Elementor's *visible, editable control defaults*. Existing widgets keep their settings.
+
+**To make a compact or zero-spacing button:**
+
+1. Style → Layout → **Button Padding**: set top/right/bottom/left to `0`.
+2. Style → Layout → **Minimum Height (0 = None)**: set to `0`. Leave **Exact Button Height** empty for auto sizing.
+3. Style → Layout → **Text / Icon Gap**: set to `0`; also use **Inner Content Padding** of `0`.
+4. Style → Icon Style → **Icon Circle Width**, **Icon Circle Height** and **Icon Circle Padding** are independent of button padding. Lower these sizes as desired. **Icon Glyph Size** is separately controlled.
+5. Style → Typography → **Line Height** affects the natural text height. Parent Elementor Containers may also have their own padding or gap.
+
+All listed dimensions support explicit zero values; padding settings are responsive for desktop/tablet/mobile. Duration values for reveal animations now support 0ms as well.
+
+**Updating:** upload the latest ZIP and replace the current plugin (the plugin folder and Elementor widget internal ID are unchanged). Then clear page/CDN caches and regenerate Elementor CSS if a cached visual persists.
+
+## v1.0.3 — GSAP Text Hover Motion
+
+- Added **Content → Text Hover Motion (GSAP)** with six modes (including Off).
+- Default is a subtle 3px upward hover lift, animated with GSAP.
+- Custom control over entry speed, exit speed, travel distance, scale, stagger, reveal start opacity, and easing. Each can be set independently; movement 0 removes positional offset.
+- Letter Wave keeps spaces and word wrapping; characters are hidden from assistive technology and the link gets an accessible name.
+- Keyboard focus animates like hover; reduced-motion preferences disable motion.
+- Loads GSAP 3.15.0 from `cdn.jsdelivr.net` as an Elementor widget dependency. This requests a third-party script when the widget is used; no tracking is performed by this plugin. If the CDN is blocked, text effects degrade to lightweight native Web Animations API where supported.
+- Retains v1.0.2 **zero-padding / sizing** fixes and the original widget ID and plugin directory, so replacement updates existing instances.
+
+### Update from earlier versions
+
+Upload `motion-button.zip` and choose **Replace current with uploaded**. If your button still looks padded after setting Button Padding = 0, remember to set Layout → **Minimum Height**, **Inner Content Padding**, **Text/Icon Gap**, plus Icon Style → **Icon Width/Height/Padding** to 0 independently. Elementor templates/containers can add external spacing.
+
+
+## v1.0.4 — Independent Mobile Animation Controls
+
+Open **Content → Mobile Motion (Touch & Tap)**. These settings control touch/mobile animation independently of the desktop settings; they do not replace the separate responsive layout/padding controls in **Style → Layout**.
+
+| Control group | Options |
+| --- | --- |
+| Touch Behavior | Tap (animate then reset), Press (animate while held), Off |
+| Device scope | Phone width only (default <= 767px) or phone + all touch screens; custom phone breakpoint 320–1200px |
+| Background | Inherit Desktop, Directional from tap position, Left/Right/Top/Bottom, Center, Diagonal, Fade, Instant; enter/exit duration and easing |
+| Icon | Inherit, Rotate, Slide, Scale, Pop, None; custom rotation **-360° to +360°** (default **+90°**); independent speed and slide distance |
+| Text (GSAP) | Inherit, None, Lift, Fade & Rise, Scale, Letter Wave, Blur; separate enter/exit timing, distance, scale, stagger, opacity and easing |
+| Extra | Mobile color transition speed, whole-button lift/scale, configurable tap auto-reset delay and click ripple |
+
+### Recommended mobile defaults
+
+- Touch behavior: **Tap: animate, then auto-reset**.
+- Reveal: **Center Expand** (420ms in / 360ms out).
+- Icon: **Rotate +90°** (400ms).
+- Text: **Subtle Lift, 2px** (320ms in / 260ms out).
+- Tap auto-reset: **500ms**. This timer controls visual reset only — it never postpones a link.
+
+For *real mobile tap testing*, use a phone or browser touch emulation. Elementor's responsive preview changes viewport size, but a desktop mouse continues to simulate a hover rather than an actual finger press. The mobile animation styling is still selected at the configured phone breakpoint.
+
+Touch behavior Off disables touch motion; keyboard focus still supports the desktop/widget animation as an accessible interaction when appropriate. Reduced-motion preferences disable motion. Upgrading preserves the internal widget ID and previous desktop settings; mobile settings are new and editable per button instance.
