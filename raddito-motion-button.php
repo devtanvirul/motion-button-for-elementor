@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: Motion Button
+ * Plugin Name: Motion Button for Elementor
  * Description: A customizable animated button for Elementor Free with directional reveals, icon animation, responsive styles and global colors.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Requires at least: 6.2
  * Requires PHP: 7.4
- * Author: Tanvirul Islam
+ * Author: devtanvirul
  * Author URI: https://devtanvirul.com
  * Text Domain: raddito-motion-button
  * License: GPLv2 or later
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'RMB_VERSION', '1.0.4' );
+define( 'RMB_VERSION', '1.0.5' );
 define( 'RMB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'RMB_URL', plugin_dir_url( __FILE__ ) );
 
@@ -24,7 +24,7 @@ function rmb_missing_elementor_notice() {
     if ( ! current_user_can( 'activate_plugins' ) ) {
         return;
     }
-    echo '<div class="notice notice-warning"><p>' . esc_html__( 'Motion Button requires the free Elementor plugin to be installed and active.', 'raddito-motion-button' ) . '</p></div>';
+    echo '<div class="notice notice-warning"><p>' . esc_html__( 'Motion Button for Elementor requires the free Elementor plugin to be installed and active.', 'raddito-motion-button' ) . '</p></div>';
 }
 
 /** Register frontend dependencies; Elementor loads them only for pages using the widget. */

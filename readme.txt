@@ -1,28 +1,34 @@
-=== Motion Button ===
+=== Motion Button for Elementor ===
+Contributors: devtanvirul
 Tags: elementor, animated button, hover, directional, widget
 Requires at least: 6.2
 Requires PHP: 7.4
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 
 Premium-style directional reveal buttons with complete Elementor Free styling controls, icon rotation, and independent mobile tap/press animations.
 
 == Installation ==
-Upload the ZIP in Plugins > Add New Plugin > Upload Plugin. Activate Elementor Free, then activate Motion Button. In the Elementor editor, search for "Motion Button" and drag it into your page.
+Upload the ZIP in Plugins > Add New Plugin > Upload Plugin. Activate Elementor Free, then activate Motion Button for Elementor. In the Elementor editor, search for "Motion Button" and drag it into your page.
 
 == Features ==
 9 background hover effects; adjustable directional animation; 5 icon animations with 90-degree default hover rotation; icon size, shape, normal/hover palette; global Accent fallback #E5212B; responsive layout, typography and spacing; click ripple and optional magnetic cursor; keyboard focus and reduced-motion support.
 
 == Mobile animation controls ==
-Open Elementor > Motion Button > Content > Mobile Motion (Touch & Tap). Set Tap / Press / Off; customize the phone breakpoint, reveal effect, durations, icon motion/rotation, GSAP text effect/duration, and optional ripple. Desktop and mobile animation values remain independent. Tap effects do not delay link navigation.
+Open Elementor > Motion Button for Elementor > Content > Mobile Motion (Touch & Tap). Set Tap / Press / Off; customize the phone breakpoint, reveal effect, durations, icon motion/rotation, GSAP text effect/duration, and optional ripple. Desktop and mobile animation values remain independent. Tap effects do not delay link navigation.
 
 == Notes ==
 This plugin adds a new Elementor widget; it does not alter the built-in Elementor button. The default link is a placeholder (#), which should be replaced before publishing. No Pro features are required.
 
-Developer: Tanvirul Islam
+Developer: devtanvirul
 Portfolio: https://devtanvirul.com
 
 == Changelog ==
+= 1.0.5 =
+* Renamed the plugin and Elementor widget label to "Motion Button for Elementor"; author now shown as devtanvirul.
+* Plugin folder, widget ID, text domain and CSS/JS prefixes are unchanged, so buttons already placed on pages keep working and this installs over 1.0.4.
+* No functional, styling or control changes.
+
 = 1.0.2 =
 * Removed hidden CSS fallback spacing. Button padding, minimum height, gap, and icon dimensions can be set to zero.
 * Added optional exact height, content padding, icon padding, content justification controls.

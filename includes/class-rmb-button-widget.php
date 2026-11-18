@@ -7,10 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Raddito_Motion_Button_Widget extends \Elementor\Widget_Base {
 
     public function get_name() { return 'raddito-motion-button'; }
-    public function get_title() { return esc_html__( 'Motion Button', 'raddito-motion-button' ); }
+    public function get_title() { return esc_html__( 'Motion Button for Elementor', 'raddito-motion-button' ); }
     public function get_icon() { return 'eicon-button'; }
     public function get_categories() { return array( 'basic' ); }
-    public function get_keywords() { return array( 'button', 'motion', 'animated', 'directional', 'hover', 'tanvirul' ); }
+    public function get_keywords() { return array( 'button', 'motion', 'animated', 'directional', 'hover', 'tanvirul', 'devtanvirul' ); }
     public function get_style_depends() { return array( 'rmb-button' ); }
     public function get_script_depends() { return array( 'rmb-button' ); }
 

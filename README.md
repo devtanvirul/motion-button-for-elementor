@@ -1,6 +1,7 @@
 # Motion Button for Elementor
 
-**Version:** 1.0.4  
+**Developer:** devtanvirul — https://devtanvirul.com  
+**Version:** 1.0.5  
 **Requirements:** WordPress 6.2+, PHP 7.4+, Elementor Free (or Pro).  
 **Price/dependencies:** No Elementor Pro or paid addon required. GSAP is an external open-web CDN dependency only for text animation; a built-in Web Animations fallback keeps button interactions working if blocked.
 
@@ -77,11 +78,11 @@ The default icon is a vertical up arrow rotated **45° at rest**, producing a di
 - For a destination link, supply a real URL; placeholder `#` must be replaced manually.
 - A WordPress/Elementor integration smoke test is recommended on a staging site before production, especially when using aggressive cache/JS optimization plugins.
 
-**Developer:** Tanvirul Islam.  
+**Developer:** devtanvirul.  
 **Portfolio:** https://devtanvirul.com  
 **License:** GPL-2.0-or-later.
 
-**Compatibility note:** The internal widget ID remains `raddito-motion-button` and plugin directory remains `raddito-motion-button` so existing Elementor pages continue to recognize the widget and the plugin can replace the earlier release. The visible plugin and widget names are **Motion Button**.
+**Compatibility note:** The internal widget ID remains `raddito-motion-button` and plugin directory remains `raddito-motion-button` so existing Elementor pages continue to recognize the widget and the plugin can replace the earlier release. The visible plugin and widget names are **Motion Button for Elementor**.
 
 ## v1.0.2 — Zero Padding / Full Spacing Control Fix
 
@@ -138,3 +139,12 @@ Open **Content → Mobile Motion (Touch & Tap)**. These settings control touch/m
 For *real mobile tap testing*, use a phone or browser touch emulation. Elementor's responsive preview changes viewport size, but a desktop mouse continues to simulate a hover rather than an actual finger press. The mobile animation styling is still selected at the configured phone breakpoint.
 
 Touch behavior Off disables touch motion; keyboard focus still supports the desktop/widget animation as an accessible interaction when appropriate. Reduced-motion preferences disable motion. Upgrading preserves the internal widget ID and previous desktop settings; mobile settings are new and editable per button instance.
+
+## v1.0.5 — Plugin Name and Author Branding
+
+- Plugin name is now **Motion Button for Elementor**, shown in **Plugins → Installed Plugins** as *Motion Button for Elementor — By devtanvirul*.
+- The Elementor widget label in the editor panel is now **Motion Button for Elementor**. Searching "Motion Button" still finds it.
+- Author is shown as **devtanvirul** (portfolio link unchanged).
+- **Nothing internal changed.** Plugin folder (`raddito-motion-button`), widget ID (`raddito-motion-button`), text domain, PHP class, `RMB_*` constants and `rmb-` CSS/JS prefixes are all identical to 1.0.4.
+- Because the folder and widget ID are unchanged, this ZIP installs **over** 1.0.4 as a normal update, and every Motion Button already placed on a page keeps its settings and keeps rendering.
+- No functional, animation, control or styling changes.
