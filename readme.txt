@@ -44,19 +44,19 @@ Portfolio: https://devtanvirul.com
 * Plugin folder, widget ID, text domain and CSS/JS prefixes are unchanged, so buttons already placed on pages keep working and this installs over 1.0.4.
 * No functional, styling or control changes.
 
-= 1.0.2 =
-* Removed hidden CSS fallback spacing. Button padding, minimum height, gap, and icon dimensions can be set to zero.
-* Added optional exact height, content padding, icon padding, content justification controls.
-* Allows zero reveal duration and preserves existing widget IDs / settings.
-
-= 1.0.3 =
-* Added optional GSAP-powered text hover animations: subtle lift, fade/rise, scale, letter wave and soft blur, each with editable timing and motion.
-* Kept full zero-spacing controls introduced in v1.0.2.
-* Web Animations fallback for blocked GSAP CDN; respects reduced-motion settings.
-
 = 1.0.4 =
 * Added independent Mobile Motion panel with phone breakpoint and all-touch-screen scope.
 * Added Tap / Press / Off behavior, tap auto-reset, background reveal/easing/durations.
 * Added separate mobile icon effect/90-degree rotation, text GSAP effects/timing, scale/lift and ripple settings.
 * Kept first-tap navigation, desktop settings and existing widget ID intact.
 * Handles responsive switching and keyboard/reduced-motion behavior.
+
+= 1.0.3 =
+* Added optional GSAP-powered text hover animations: subtle lift, fade/rise, scale, letter wave and soft blur, each with editable timing and motion.
+* Kept full zero-spacing controls introduced in v1.0.2.
+* Web Animations fallback for blocked GSAP CDN; respects reduced-motion settings.
+
+= 1.0.2 =
+* Removed hidden CSS fallback spacing. Button padding, minimum height, gap, and icon dimensions can be set to zero.
+* Added optional exact height, content padding, icon padding, content justification controls.
+* Allows zero reveal duration and preserves existing widget IDs / settings.

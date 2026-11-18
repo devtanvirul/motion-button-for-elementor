@@ -8,3 +8,4 @@ Thumbs.db
 # Build output — releases are published as GitHub Releases, not committed
 *.zip
 node_modules/
+dist/
